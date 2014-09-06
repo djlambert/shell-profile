@@ -12,6 +12,15 @@ alias ls='ls $LS_OPTIONS -F'
 alias ll='ls $LS_OPTIONS -lF'
 
 #
+# Set aliases for root
+#
+if [[ $EUID -eq 0 ]]; then
+    alias rm='rm -i'
+    alias cp='cp -i'
+    alias mv='mv -i'
+fi
+
+#
 # Set OS specific aliases
 #
 if [ "${OS_TYPE}" = "darwin" ]; then
