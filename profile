@@ -76,7 +76,7 @@ fi
 case "${SHELL}" in
     *bash)
         #typeset +x PS1="\u@\h:\w\\$ "
-        typeset +x PS1="[\h \u \t]\w-$ "
+        typeset +x PS1='[\t][\u@\h]\w\$ '
         ;;
 esac
 
