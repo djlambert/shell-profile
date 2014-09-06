@@ -1,0 +1,4 @@
+* One line install init/download
+** Download files from web/repo/wherever to .shell or local directory, then run install script
+* Install script
+** Prompt to install files?
