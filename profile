@@ -4,9 +4,14 @@
 # Load environment variables and other propagated settings
 #
 
-#
-# Local functions - unset at end
-#
+## Global vars
+## TODO: Move to external file and source in each script
+LOCAL_SOURCE="${HOME}/.shell"
+LOCAL_PATHS="${LOCAL_SOURCE}/paths.local"
+
+##
+## Local functions - unset at end
+##
 pathmunge() {
     case ":${PATH}:" in
         *:"$1":*)
@@ -49,9 +54,19 @@ uc() {
     done
     echo "${OUTPUT}"
 }
+##
+## End local functions
+##
+
+##
+## Start of script
+##
+# TODO: Check for updates and download
+# If new version(s) found install and restart shell (exec shell)
 
 #
 # Try and determine OS
+# TODO: Allow override from global vars
 #
 command -v uname >/dev/null 2>&1
 RESULT=$?
@@ -108,6 +123,7 @@ PATHS=$(cat <<_PATHS_END
 /opt/local/bin
 /opt/local/sbin
 $HOME/bin
+$([ -f "${LOCAL_PATHS}" ] && cat "${LOCAL_PATHS}")
 _PATHS_END
 )
 
@@ -140,6 +156,7 @@ export PATH LS_OPTIONS OS_TYPE
 
 #
 # Clean up
+# TODO: Clean up other vars and functions from environment
 #
 unset -f pathmunge lc uc
-
+unset -v PATHS
