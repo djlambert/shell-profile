@@ -1,2 +1,74 @@
 #!/bin/sh
-echo This will ask some questions and copy files
+INSTALL_DIR="${HOME}/.shell"
+BACKUP_DIR="${INSTALL_DIR}/backup"
+TARBALL_URL="https://api.github.com/repos/djlambert/shell-profile/tarball/master"
+DEBUG=1
+
+trap cancel INT
+
+exec 3>/dev/null
+exec 4>/dev/null
+
+if [ $DEBUG -eq 1 ]; then
+    exec 3>&1
+    exec 4>&2
+
+    printf "Debugging enabled\n"
+fi
+
+cancel() {
+    printf "Cancelling...\n"
+}
+
+cleanUp() {
+    RESULT=$?
+
+    if [ $RESULT -ne 0 ]; then
+        printf "Cleaning up...\n"
+
+        if [ -d "${INSTALL_DIR}" ]; then
+            printf "Removing install directory\n"
+            rm -rf "${INSTALL_DIR}" 1>&3 2>&4
+        fi
+    fi
+
+    3>&-
+    4>&-
+}
+
+while getopts i: opt; do
+    case $opt in
+        i)
+            INSTALL_DIR="${OPTARG}"
+            ;;
+        ?)
+            printf "Usage: %s: [-i install dir]\n" $0
+            exit 2
+            ;;
+    esac
+done
+
+if [ -d "${INSTALL_DIR}" ]; then
+    # TODO prompt to continue and overwrite
+    printf "Aborting install, directory %s already exists\n" "${INSTALL_DIR}"
+    exit 1
+fi
+
+mkdir "${INSTALL_DIR}" 1>&3 2>&4
+
+if [ $? -ne 0 ]; then
+    printf "Aborting install, error creating directory %s\n" "${INSTALL_DIR}"
+    exit 1
+fi
+
+trap cleanUp TERM EXIT
+
+printf "Downloading installation files...\n"
+
+wget --no-verbose --no-check-certificate --output-document=- "${TARBALL_URL}" 2>&4 | tar -xzf- -C "${INSTALL_DIR}" --strip-components=1 1>&3 2>&4
+
+if [ $? -ne 0 ]; then
+    printf "Aborting install, error downloading installation files\n"
+    exit 1
+fi
+
