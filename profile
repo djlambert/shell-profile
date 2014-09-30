@@ -99,7 +99,7 @@ esac
 # Set ls options
 #
 if [ "${TERM}" != "dumb" ]; then
-    if [ "${OS_TYPE}" = "Darwin" ]; then
+    if [ "${OS_TYPE}" = "darwin" ]; then
         LS_OPTIONS="-G"
         export LSCOLORS="dxfxcxdxbxegedabagacad"
     else
