@@ -153,7 +153,7 @@ for basename in $BOOTSTRAP_FILES; do
 
     printf "Bootstrapping ${basename}\n"
 
-    sed "s|##INSTALL##|$INSTALL_DIR|;s|##SCRIPT##|${basename}|" bootstrap > "${destfile}"
+    sed "s|##INSTALL##|$INSTALL_DIR|;s|##SCRIPT##|${basename}|" "${INSTALL_DIR}/bootstrap" > "${destfile}"
 done
 
 # Copy additional files
