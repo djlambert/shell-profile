@@ -1,10 +1,14 @@
-if !exists("syntax_on")
-  syntax on
+" shell-profile-file
+if has("syntax")
+    syntax on
+endif
+
+if has("mac")
+    let macvim_hig_shift_movement=1
 endif
 
 set nocompatible
 set showmatch
-set bg=dark
 set incsearch
 set tabstop=4
 set shiftwidth=4

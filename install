@@ -2,30 +2,59 @@
 INSTALL_DIR="${HOME}/.shell"
 BACKUP_DIR="${INSTALL_DIR}/backup"
 TARBALL_URL="https://api.github.com/repos/djlambert/shell-profile/tarball/master"
-INSTALL_FILES="profile bashrc dir_colors vimrc"
+BOOTSTRAP_FILES="profile bashrc"
+INSTALL_FILES="dir_colors vimrc"
+INSTALL_FORCE=0
+INSTALL_LOCAL=0
+INSTALL_EXISTING=0
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 DEBUG=1
-
-trap cancel INT
-
-exec 3>/dev/null
-exec 4>/dev/null
-
-if [ $DEBUG -eq 1 ]; then
-    exec 3>&1
-    exec 4>&2
-
-    printf "Debugging enabled\n"
-fi
+RESULT=0
 
 cancel() {
     printf "Cancelling...\n"
 }
 
+ioOpen() {
+    exec 3>/dev/null
+    exec 4>/dev/null
+}
+
+ioClose() {
+    3>&-
+    4>&-
+}
+
+ioCopyStd() {
+    exec 3>&1
+    exec 4>&2
+
+}
+
+checkDebug() {
+    if [ $((${DEBUG:-0})) -eq 1 ]; then
+        ioCopyStd
+
+        printf "Debugging enabled\n"
+    fi
+}
+
+ioCloseAndExit() {
+    LAST_RESULT=$?
+
+    if [ -z $RESULT ]; then
+        $RESULT=$LAST_RESULT
+    fi
+
+    ioClose
+
+    exit $RESULT
+}
+
 cleanUp() {
     RESULT=$?
 
-    if [ $RESULT -ne 0 ]; then
+    if [ $RESULT -ne 0 ] && [ ${INSTALL_EXISTING:-0} -ne 1 ]; then
         printf "Cleaning up...\n"
 
         if [ -d "${INSTALL_DIR}" ]; then
@@ -34,60 +63,109 @@ cleanUp() {
         fi
     fi
 
-    3>&-
-    4>&-
+    ioCloseAndExit
 }
 
-while getopts i: opt; do
+trap cancel INT
+
+ioOpen
+
+# Set exit handler
+trap ioCloseAndExit TERM EXIT
+
+checkDebug
+
+# Process command line options
+while getopts i:fl opt; do
     case $opt in
-        i)
-            INSTALL_DIR="${OPTARG}"
-            ;;
+        i) INSTALL_DIR="${OPTARG}";;
+        f) INSTALL_FORCE=1;;
+        l) INSTALL_LOCAL=1;;
         ?)
-            printf "Usage: %s: [-i install dir]\n" $0
+            printf "Usage: %s: [-f][-l][-i install dir]\n" $0
             exit 2
             ;;
     esac
 done
 
+# Create install directory
+# Exit with error on failure or directory exists and not force install
 if [ -d "${INSTALL_DIR}" ]; then
-    # TODO prompt to continue and overwrite
-    printf "Aborting install, directory %s already exists\n" "${INSTALL_DIR}"
-    exit 1
+    if [ ${INSTALL_FORCE:-0} -ne 1 ]; then
+        printf "Aborting install, directory %s already exists\n" "${INSTALL_DIR}"
+        exit 1
+    else
+        INSTALL_EXISTING=1
+        printf "Installing over existing files in %s\n" "${INSTALL_DIR}"
+    fi
+else
+    mkdir "${INSTALL_DIR}" 1>&3 2>&4
+
+    if [ $? -ne 0 ]; then
+        printf "Aborting install, error creating directory %s\n" "${INSTALL_DIR}"
+        exit 1
+    fi
 fi
 
-mkdir "${INSTALL_DIR}" 1>&3 2>&4
-
-if [ $? -ne 0 ]; then
-    printf "Aborting install, error creating directory %s\n" "${INSTALL_DIR}"
-    exit 1
-fi
-
+# Set exit handler
+# Changes may now have been made
 trap cleanUp TERM EXIT
 
-printf "Downloading package files...\n"
+# Create backup directory
+# Continue if exists (force install)
+# Exit with error on failure
+if [ ! -d "${BACKUP_DIR}" ]; then
+    mkdir "${BACKUP_DIR}" 1>&3 2>&4
 
-wget --no-verbose --no-check-certificate --output-document=- "${TARBALL_URL}" 2>&4 | tar -xzf- -C "${INSTALL_DIR}" --strip-components=1 1>&3 2>&4
-
-if [ $? -ne 0 ]; then
-    printf "Aborting install, error downloading installation files\n"
-    exit 1
+    if [ $? -ne 0 ]; then
+        printf "Aborting install, error creating backup directory %s\n" "${INSTALL_DIR}"
+        exit 1
+    fi
 fi
 
-mkdir "${BACKUP_DIR}" 1>&3 2>&4
+# Download package files
+# Continue on local install source
+if [ ${INSTALL_LOCAL:-0} -ne 1 ]; then
+    printf "Downloading package files...\n"
 
-if [ $? -ne 0 ]; then
-    printf "Aborting install, error creating backup directory %s\n" "${INSTALL_DIR}"
-    exit 1
+    wget --no-verbose --no-check-certificate --output-document=- "${TARBALL_URL}" 2>&4 | tar -xzf- -C "${INSTALL_DIR}" --strip-components=1 1>&3 2>&4
+
+    if [ $? -ne 0 ]; then
+        printf "Aborting install, error downloading installation files\n"
+        exit 1
+    fi
+else
+    printf "Installing from local source\n"
+    cp * "${INSTALL_DIR}"
 fi
 
-for basename in $INSTALL_FILES; do
-    # TODO track file operations to allow for error recovery
+# Install bootstrap files
+# Create backup if non-bootstrap exists
+for basename in $BOOTSTRAP_FILES; do
     filename=".${basename}"
     destfile="${HOME}/${filename}"
     bakfile="${BACKUP_DIR}/${basename}.${TIMESTAMP}"
 
-    if [ -f "${destfile}" ]; then
+    if [ -f "${destfile}" ] && [ $(grep -q 'shell-profile-bootstrap' ${destfile}; echo $?) != "0" ]; then
+        printf "Saving %s to %s\n" "${destfile}" "${bakfile}"
+        mv "${destfile}" "${bakfile}" 1>&3 2>&4
+    fi
+
+    printf "Bootstrapping ${basename}\n"
+
+    sed "s|##INSTALL##|$INSTALL_DIR|;s|##SCRIPT##|${basename}|" bootstrap > "${destfile}"
+done
+
+# Copy additional files
+# Create backup if not package file
+# TODO error handling
+for basename in $INSTALL_FILES; do
+    # TODO track file operations to allow for error recovery in cleanup
+    filename=".${basename}"
+    destfile="${HOME}/${filename}"
+    bakfile="${BACKUP_DIR}/${basename}.${TIMESTAMP}"
+
+    if [ -f "${destfile}" ] && [ $(grep -q 'shell-profile-file' ${destfile}; echo $?) != "0" ]; then
         printf "Saving %s to %s\n" "${destfile}" "${bakfile}"
         mv "${destfile}" "${bakfile}" 1>&3 2>&4
     fi
@@ -96,3 +174,5 @@ for basename in $INSTALL_FILES; do
 
     cp "${INSTALL_DIR}/${basename}" "${destfile}"
 done
+
+# vim: syntax=sh:ts=4:sw=4

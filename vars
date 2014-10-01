@@ -1,0 +1,14 @@
+############################################################
+############################################################
+## Change these settings in your vars.local file
+##
+SHELL_PROFILE_DEBUG=0
+
+############################################################
+############################################################
+## Change these settings at your own risk!
+##
+SHELL_PROFILE_LOCAL_PATH_FILE="${SHELL_PROFILE_PATH}/paths.local"
+SHELL_PROFILE_LOCAL_VAR_FILE="${SHELL_PROFILE_PATH}/vars.local"
+
+# vim: syntax=sh:ts=4:sw=4

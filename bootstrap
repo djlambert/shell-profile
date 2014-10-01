@@ -1,0 +1,6 @@
+# shell-profile-bootstrap
+SHELL_PROFILE_PATH="##INSTALL##"
+
+. "${SHELL_PROFILE_PATH}/##SCRIPT##"
+
+# vim: syntax=sh:ts=4:sw=4

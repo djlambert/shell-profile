@@ -1,3 +1,20 @@
+# Load includes
+
+. "${SHELL_PROFILE_PATH}/vars"
+
+if [ -z "${SHELL_PROFILE_DEF_SHELL_FUNCTIONS}" ]; then
+    . "${SHELL_PROFILE_PATH}/shell_functions"
+    SHELL_PROFILE_DEF_SHELL_FUNCTIONS="bashrc"
+fi
+
+if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ]; then
+    . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
+    msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
+    msgDebug "Debugging enabled"
+fi
+
+msgDebug "Running bashrc script"
+
 #
 # Include local settings
 #
@@ -5,6 +22,8 @@ if [ -f "${HOME}/.shell/bashrc.local" ]; then
     . "${HOME}/.shell/bashrc.local"
 fi
 
+typeset +x PS1='[\t][\u@\h]\w\$ '
+ 
 #
 # Set ls aliases
 #
@@ -29,3 +48,6 @@ if [ "${OS_TYPE}" = "darwin" ]; then
     alias kickstart='/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart'
 fi
 
+if [ "${SHELL_PROFILE_DEF_SHELL_FUNCTIONS}" == "bashrc" ]; then
+    cleanUp
+fi

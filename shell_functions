@@ -1,0 +1,91 @@
+# Script functions
+# These should all be removed from the environment when script finishes
+
+SHELL_PROFILE_DEF_SHELL_FUNCTIONS=1
+
+msgDebug() {
+    [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}"
+}
+
+pathmunge() {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ]; then
+                msgDebug "Appending ${1} to PATH"
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+                msgDebug "Prepending ${1} to PATH"
+            fi
+    esac
+}
+
+lc() {
+    # http://stackoverflow.com/a/8952274
+    uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    lowers=abcdefghijklmnopqrstuvwxyz
+    i=0
+    while ([ $i -lt ${#1} ]) do
+        CUR=${1:$i:1}
+        case $uppers in
+            *$CUR*)CUR=${uppers%$CUR*};OUTPUT="${OUTPUT}${lowers:${#CUR}:1}";;
+            *)OUTPUT="${OUTPUT}$CUR";;
+        esac
+        i=$((i+1))
+    done
+    echo "${OUTPUT}"
+}
+
+uc() {
+    # http://stackoverflow.com/a/8952274
+    uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ
+    lowers=abcdefghijklmnopqrstuvwxyz
+    i=0
+    while ([ $i -lt ${#1} ]) do
+        CUR=${1:$i:1}
+        case $lowers in
+            *$CUR*)CUR=${lowers%$CUR*};OUTPUT="${OUTPUT}${uppers:${#CUR}:1}";;
+            *)OUTPUT="${OUTPUT}$CUR";;
+        esac
+        i=$((i+1))
+    done
+    echo "${OUTPUT}"
+}
+
+getPlatform() {
+    command -v uname >/dev/null 2>&1
+    result=$?
+
+    if [ $result ]; then
+        platform=$(uname -s)
+        platform=$(lc ${platform})
+    else
+        platform="unknown"
+    fi
+
+    echo "${platform}"
+}
+
+cleanUpVars() {
+    for var in $(set); do
+        case "${var%%=*}" in
+            "SHELL_PROFILE_DEBUG");;
+            "SHELL_PROFILE_"*)
+                msgDebug "Unsetting variable ${var%%=*}"
+                unset -v "${var%%=*}"
+                ;;
+        esac
+    done
+}
+
+cleanUp() {
+    msgDebug "Cleaning up..."
+    cleanUpVars
+    msgDebug "Unsetting functions..."
+    unset -f pathmunge lc uc getPlatform cleanUp cleanUpVars msgDebug
+    unset -v SHELL_PROFILE_DEBUG
+}
+
+# vim: syntax=sh:ts=4:sw=4

@@ -1,81 +1,39 @@
 #
 # Profile script
 #
-# Load environment variables and other propagated settings
+# Load shell environment variables and other settings propagated to sub-shells
 #
 
-## Global vars
-## TODO: Move to external file and source in each script
-LOCAL_SOURCE="${HOME}/.shell"
-LOCAL_PATHS="${LOCAL_SOURCE}/paths.local"
-
-##
-## Local functions - unset at end
-##
-pathmunge() {
-    case ":${PATH}:" in
-        *:"$1":*)
-            ;;
-        *)
-            if [ "$2" = "after" ]; then
-                PATH=$PATH:$1
-            else
-                PATH=$1:$PATH
-            fi
-    esac
-}
-
-# http://stackoverflow.com/a/8952274
-uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ
-lowers=abcdefghijklmnopqrstuvwxyz
-
-lc() {
-    i=0
-    while ([ $i -lt ${#1} ]) do
-        CUR=${1:$i:1}
-        case $uppers in
-            *$CUR*)CUR=${uppers%$CUR*};OUTPUT="${OUTPUT}${lowers:${#CUR}:1}";;
-            *)OUTPUT="${OUTPUT}$CUR";;
-        esac
-        i=$((i+1))
-    done
-    echo "${OUTPUT}"
-}
-
-uc() {
-    i=0
-    while ([ $i -lt ${#1} ]) do
-        CUR=${1:$i:1}
-        case $lowers in
-            *$CUR*)CUR=${lowers%$CUR*};OUTPUT="${OUTPUT}${uppers:${#CUR}:1}";;
-            *)OUTPUT="${OUTPUT}$CUR";;
-        esac
-        i=$((i+1))
-    done
-    echo "${OUTPUT}"
-}
-##
-## End local functions
-##
+# Load includes
+. "${SHELL_PROFILE_PATH}/vars"
+. "${SHELL_PROFILE_PATH}/shell_functions"
 
 ##
 ## Start of script
 ##
-# TODO: Check for updates and download
-# If new version(s) found install and restart shell (exec shell)
 
 #
-# Try and determine OS
-# TODO: Allow override from global vars
+# Load local settings before doing anything
 #
-command -v uname >/dev/null 2>&1
-RESULT=$?
-
-if [ $RESULT ]; then
-    OS_TYPE=$(uname -s)
-    OS_TYPE=$(lc ${OS_TYPE})
+if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ]; then
+    . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
+    msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
+    msgDebug "Debugging enabled"
 fi
 
+msgDebug "Running profile script"
+
+#
+# Get platform
+#
+SHELL_PROFILE_PLATFORM=$(getPlatform)
+
+if [ "${SHELL_PROFILE_PLATFORM}" == "unknown" ]; then
+    msgDebug "Unknown platform detected!"
+else
+    msgDebug "Detected platform ${SHELL_PROFILE_PLATFORM}"
+fi
+  
 #
 # Define pager
 #
@@ -86,48 +44,38 @@ elif [ -x /usr/bin/more ]; then
 fi
 
 #
-# Define prompt
-#
-case "${SHELL}" in
-    *bash)
-        #typeset +x PS1="\u@\h:\w\\$ "
-        typeset +x PS1='[\t][\u@\h]\w\$ '
-        ;;
-esac
-
-#
 # Set ls options
 #
 if [ "${TERM}" != "dumb" ]; then
-    if [ "${OS_TYPE}" = "darwin" ]; then
-        LS_OPTIONS="-G"
-        export LSCOLORS="dxfxcxdxbxegedabagacad"
-    else
-        if [ -f ~/.dir_colors ]; then
-            case "${OS_TYPE}" in
-                *)
-                    LS_OPTIONS="--color=auto"
-                    eval $(dircolors ~/.dir_colors)
-                    ;;
-            esac
-        fi
-    fi
+    case "${SHELL_PROFILE_PLATFORM}" in
+        "darwin")
+            LS_OPTIONS="-G"
+            export LSCOLORS="dxfxcxdxbxegedabagacad"
+            ;;
+        *)
+            if [ -f ~/.dir_colors ]; then
+                LS_OPTIONS="--color=auto"
+                eval $(dircolors ~/.dir_colors)
+            fi
+            ;;
+    esac
 fi
-
+ 
 #
 # Check for and add common paths
+# Add local paths from SHELL_PROFILE_LOCAL_PATHS
 #
-PATHS=$(cat <<_PATHS_END
+SHELL_PROFILE_LOCAL_PATHS=$(cat <<_SHELL_PROFILE_LOCAL_PATHS_END
 /usr/local/bin
 /usr/local/sbin
 /opt/local/bin
 /opt/local/sbin
 $HOME/bin
-$([ -f "${LOCAL_PATHS}" ] && cat "${LOCAL_PATHS}")
-_PATHS_END
+$([ -f "${SHELL_PROFILE_LOCAL_PATH_FILE}" ] && cat "${SHELL_PROFILE_LOCAL_PATH_FILE}")
+_SHELL_PROFILE_LOCAL_PATHS_END
 )
 
-for dir in $PATHS; do
+for dir in $SHELL_PROFILE_LOCAL_PATHS; do
     if [ -d "${dir}" ]; then
         pathmunge "${dir}"
     fi        
@@ -150,13 +98,13 @@ case "${SHELL}" in
 esac
 
 #
-# Export local vars
+# Export vars
 #
 export PATH LS_OPTIONS OS_TYPE
 
 #
 # Clean up
-# TODO: Clean up other vars and functions from environment
 #
-unset -f pathmunge lc uc
-unset -v PATHS
+cleanUp
+
+# vim: syntax=sh:ts=4:sw=4
