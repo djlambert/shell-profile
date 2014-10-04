@@ -2,9 +2,9 @@
 
 . "${SHELL_PROFILE_PATH}/vars"
 
-if [ -z "${SHELL_PROFILE_DEF_SHELL_FUNCTIONS}" ]; then
-    . "${SHELL_PROFILE_PATH}/shell_functions"
-    SHELL_PROFILE_DEF_SHELL_FUNCTIONS="bashrc"
+if [ -z "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" ]; then
+    . "${SHELL_PROFILE_PATH}/script_functions"
+    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS="bashrc"
 fi
 
 if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ]; then
@@ -48,6 +48,6 @@ if [ "${OS_TYPE}" = "darwin" ]; then
     alias kickstart='/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart'
 fi
 
-if [ "${SHELL_PROFILE_DEF_SHELL_FUNCTIONS}" == "bashrc" ]; then
+if [ "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" == "bashrc" ]; then
     cleanUp
 fi

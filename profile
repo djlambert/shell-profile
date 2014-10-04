@@ -6,7 +6,7 @@
 
 # Load includes
 . "${SHELL_PROFILE_PATH}/vars"
-. "${SHELL_PROFILE_PATH}/shell_functions"
+. "${SHELL_PROFILE_PATH}/script_functions"
 
 ##
 ## Start of script

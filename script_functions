@@ -1,7 +1,7 @@
 # Script functions
 # These should all be removed from the environment when script finishes
 
-SHELL_PROFILE_DEF_SHELL_FUNCTIONS=1
+SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=1
 
 msgDebug() {
     [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}"
