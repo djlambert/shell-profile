@@ -1,0 +1,55 @@
+#!/bin/sh
+rmknownhost() {
+    #KNOWN_HOSTS_FILE="${HOME}/.ssh/known_hosts"
+    local KNOWN_HOSTS_FILE="./known_hosts"
+    local USAGE="Usage: rmknownhost [-f] line#\n\n"
+    OPTIND=1
+
+    while getopts f opt; do
+        case $opt in
+            f) local FORCE=1;;
+            ?)
+                printf "${USAGE}"
+                return 2
+                ;;
+        esac
+    done
+
+    shift $((OPTIND-1))
+
+    local LINE=$@
+
+    if [ -z "${LINE}" ]; then
+        printf "${USAGE}"
+        return 2
+    fi
+
+    if [ ! -w ${KNOWN_HOSTS_FILE} ]; then
+        printf "Known hosts file %s is not writeable!\n" "${KNOWN_HOSTS_FILE}"
+        return 2
+    fi
+
+    test ${LINE} -eq 1 >/dev/null 2>&1
+    
+    if [ $? -gt 1 ]; then
+        printf "Invalid line number '%s'\n" ${LINE}
+        return 2
+    fi
+
+    local COUNT=$(sed -n $= ${KNOWN_HOSTS_FILE})
+
+    if [ ${COUNT} -lt ${LINE} ]; then
+        printf "Line number %d out of range\n" ${LINE}
+        return 2
+    fi
+
+    local HOST=$(awk 'NR=='${LINE}' {print $1;exit}' ${KNOWN_HOSTS_FILE})
+
+    if [ ${FORCE:-0} -ne 1 ]; then
+        printf "Delete '%s' [y/N]?\n" "${HOST}"
+    fi
+   
+    local COMMAND="'${LINE}d'"
+
+    printf "Count is %d, command is %s, host is %s\n" ${COUNT} ${COMMAND} ${HOST}
+}
