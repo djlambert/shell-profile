@@ -1,7 +1,6 @@
 #!/bin/sh
 rmknownhost() {
-    #KNOWN_HOSTS_FILE="${HOME}/.ssh/known_hosts"
-    local KNOWN_HOSTS_FILE="./known_hosts"
+    local KNOWN_HOSTS_FILE="${HOME}/.ssh/known_hosts"
     local USAGE="Usage: rmknownhost [-f] line#\n\n"
     OPTIND=1
 
@@ -24,7 +23,12 @@ rmknownhost() {
         return 2
     fi
 
-    if [ ! -w ${KNOWN_HOSTS_FILE} ]; then
+    if [ ! -r "${KNOWN_HOSTS_FILE}" ]; then
+        printf "Known hosts file %s is not readable!\n" "${KNOWN_HOSTS_FILE}"
+        return 2
+    fi
+
+    if [ ! -w "${KNOWN_HOSTS_FILE}" ]; then
         printf "Known hosts file %s is not writeable!\n" "${KNOWN_HOSTS_FILE}"
         return 2
     fi
@@ -36,20 +40,51 @@ rmknownhost() {
         return 2
     fi
 
-    local COUNT=$(sed -n $= ${KNOWN_HOSTS_FILE})
+    local COUNT=$(sed -n $= "${KNOWN_HOSTS_FILE}")
 
     if [ ${COUNT} -lt ${LINE} ]; then
         printf "Line number %d out of range\n" ${LINE}
         return 2
     fi
 
-    local HOST=$(awk 'NR=='${LINE}' {print $1;exit}' ${KNOWN_HOSTS_FILE})
+    local HOST=$(awk 'NR=='${LINE}' {print $1;exit}' "${KNOWN_HOSTS_FILE}")
 
     if [ ${FORCE:-0} -ne 1 ]; then
-        printf "Delete '%s' [y/N]?\n" "${HOST}"
+        local INPUT=
+
+        printf "Delete '%s' [y/N]? " "${HOST}"
+        read INPUT
+
+        while true; do
+            case "${INPUT}" in
+                y|Y) break;;
+                n|N|'') return 0;;
+                *) printf "Delete '%s' [y/N]? " "${HOST}"; read INPUT;;
+            esac
+        done
     fi
    
-    local COMMAND="'${LINE}d'"
+    local SCRIPT="${LINE}d"
+    local TEMP_FILE="${KNOWN_HOSTS_FILE}.${RANDOM}${RANDOM}"
 
-    printf "Count is %d, command is %s, host is %s\n" ${COUNT} ${COMMAND} ${HOST}
+    if [ -f "${TEMP_FILE}" ]; then
+        printf "Temp file %s exists, aborting\n" "${TEMP_FILE}"
+        return 2
+    fi
+
+    sed "${SCRIPT}" "${KNOWN_HOSTS_FILE}" > "${TEMP_FILE}" 2>/dev/null
+
+    if [ $? -ne 0 ]; then
+        printf "Error creating temp file %s, aborting\n" "${TEMP_FILE}"
+        rm -f "${TEMP_FILE}" >/dev/null 2>&1
+        return 2
+    fi
+
+    mv -f "${TEMP_FILE}" "${KNOWN_HOSTS_FILE}" >/dev/null 2>&1
+
+    if [ $? -ne 0 ]; then
+        printf "Error replacing file %s\n" "${KNOWN_HOSTS_FILE}"
+    fi
+
+    rm -f "${TEMP_FILE}" >/dev/null 2>&1
 }
