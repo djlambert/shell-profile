@@ -7,9 +7,12 @@ msgDebug() {
     [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}"
 }
 
-pathmunge() {
+pathAdd() {
+    msgDebug "Checking path for ${1}"
+
     case ":${PATH}:" in
         *:"$1":*)
+            msgDebug "...found"
             ;;
         *)
             if [ "$2" = "after" ]; then
@@ -84,7 +87,7 @@ cleanUp() {
     msgDebug "Cleaning up..."
     cleanUpVars
     msgDebug "Unsetting functions..."
-    unset -f pathmunge lc uc getPlatform cleanUp cleanUpVars msgDebug
+    unset -f pathAdd lc uc getPlatform cleanUp cleanUpVars msgDebug
     unset -v SHELL_PROFILE_DEBUG
 }
 

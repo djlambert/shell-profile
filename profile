@@ -75,9 +75,11 @@ $([ -f "${SHELL_PROFILE_LOCAL_PATH_FILE}" ] && cat "${SHELL_PROFILE_LOCAL_PATH_F
 _SHELL_PROFILE_LOCAL_PATHS_END
 )
 
+msgDebug "Adding paths..."
+
 for dir in $SHELL_PROFILE_LOCAL_PATHS; do
     if [ -d "${dir}" ]; then
-        pathmunge "${dir}"
+        pathAdd "${dir}"
     fi        
 done
 
