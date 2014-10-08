@@ -97,6 +97,9 @@ case "${SHELL}" in
         ;;
 esac
 
+msgDebug "Loading shell functions"
+. "${SHELL_PROFILE_PATH}/shell_functions"
+
 #
 # Export vars
 #
