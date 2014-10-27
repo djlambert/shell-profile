@@ -2,7 +2,7 @@
 INSTALL_DIR="${HOME}/.shell"
 BACKUP_DIR="${INSTALL_DIR}/backup"
 TARBALL_URL="https://api.github.com/repos/djlambert/shell-profile/tarball/master"
-TARBALL_FILE="${INSTALL_DIR}/.shell-profile_${RANDOM}${RANDOM}.tgz"
+TARBALL_FILE=".shell-profile_${RANDOM}${RANDOM}.tgz"
 BOOTSTRAP_FILES="profile bashrc"
 INSTALL_FILES="dir_colors vimrc"
 INSTALL_FORCE=0
@@ -129,6 +129,14 @@ if [ ! -d "${BACKUP_DIR}" ]; then
     fi
 fi
 
+# Determine tar executable
+if [ $(uname) = "SunOS" ]; then
+    printf "Detected SunOS\n"
+    TAR_CMD="gtar"
+else
+    TAR_CMD="tar"
+fi
+
 # Download package files
 # Continue on local install source
 if [ ${INSTALL_LOCAL:-0} -ne 1 ]; then
@@ -141,7 +149,7 @@ if [ ${INSTALL_LOCAL:-0} -ne 1 ]; then
         exit 1
     fi
 
-    tar -xz --strip-components=1 -f "${TARBALL_FILE}" 1>&3 2>&4
+    ${TAR_CMD} -xzC "${INSTALL_DIR}" --strip-components=1 -f "${TARBALL_FILE}" 1>&3 2>&4
 
     if [ $? -ne 0 ]; then
         printf "Aborting install, error extracting installation files\n"
