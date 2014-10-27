@@ -141,7 +141,7 @@ if [ ${INSTALL_LOCAL:-0} -ne 1 ]; then
         exit 1
     fi
 
-    tar -xzf- -C "${INSTALL_DIR}" --strip-components=1 "${TARBALL_FILENAME}" 1>&3 2>&4
+    tar -xzC "${INSTALL_DIR}" --strip-components=1 -f "${TARBALL_FILENAME}" 1>&3 2>&4
 else
     printf "Installing from local source\n"
     cp * "${INSTALL_DIR}"
