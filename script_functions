@@ -4,7 +4,9 @@
 SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=1
 
 msgDebug() {
-    [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}"
+    case $- in
+        *i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}";;
+    esac
 }
 
 pathAdd() {
