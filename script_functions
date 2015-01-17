@@ -10,11 +10,9 @@ msgDebug() {
 }
 
 addPath() {
-    msgDebug "Checking path for ${1}"
-
     case ":${PATH}:" in
         *:"$1":*)
-            msgDebug "...found"
+            msgDebug "${1} already in path"
             ;;
         *)
             if [ "$2" = "after" ]; then
@@ -28,11 +26,9 @@ addPath() {
 }
 
 addPaths() {
-    msgDebug "Adding paths..."
-
     for dir in $1; do
         if [ -d "${dir}" ]; then
-            addPath "${dir}"
+            addPath "${dir}" "${2}"
         else
             msgDebug "${dir} not found, skipping"
         fi

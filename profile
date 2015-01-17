@@ -60,11 +60,12 @@ if [ "${TERM}" != "dumb" ]; then
             ;;
     esac
 fi
- 
+
 #
 # Check for and add common paths
-# Add local paths from SHELL_PROFILE_LOCAL_PATHS
+# Add local paths from SHELL_PROFILE_LOCAL_PATH_FILE
 #
+msgDebug "Setting PATH..."
 SHELL_PROFILE_LOCAL_PATHS=$(cat <<_SHELL_PROFILE_LOCAL_PATHS_END
 /usr/local/bin
 /usr/local/sbin
@@ -76,6 +77,22 @@ _SHELL_PROFILE_LOCAL_PATHS_END
 )
 
 addPaths "${SHELL_PROFILE_LOCAL_PATHS}"
+
+#
+# Add paths from SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE
+#
+if [ -f "${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}" ]; then
+    msgDebug "Prepending paths from ${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}..."
+    addPaths "$(cat "${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}")"
+fi
+
+#
+# Add paths from SHELL_PROFILE_LOCAL_PATH_APPEND_FILE
+#
+if [ -f "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}" ]; then
+    msgDebug "Appending paths from ${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}..."
+    addPaths "$(cat "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}")" after
+fi
 
 #
 # Set shell options
