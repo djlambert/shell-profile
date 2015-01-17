@@ -79,7 +79,7 @@ msgDebug "Adding paths..."
 
 for dir in $SHELL_PROFILE_LOCAL_PATHS; do
     if [ -d "${dir}" ]; then
-        pathAdd "${dir}"
+        addPath "${dir}"
     fi        
 done
 
