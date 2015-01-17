@@ -54,6 +54,7 @@ if [ "${TERM}" != "dumb" ]; then
             ;;
         *)
             if [ -f ~/.dir_colors ]; then
+                msgDebug "Found ~/.dir_colors, setting environment variables..."
                 LS_OPTIONS="--color=auto"
                 eval $(dircolors ~/.dir_colors)
             fi
