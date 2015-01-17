@@ -33,6 +33,8 @@ addPaths() {
     for dir in $1; do
         if [ -d "${dir}" ]; then
             addPath "${dir}"
+        else
+            msgDebug "${dir} not found, skipping"
         fi
     done
 }
