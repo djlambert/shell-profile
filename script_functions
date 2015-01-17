@@ -27,6 +27,16 @@ addPath() {
     esac
 }
 
+addPaths() {
+    msgDebug "Adding paths..."
+
+    for dir in $1; do
+        if [ -d "${dir}" ]; then
+            addPath "${dir}"
+        fi
+    done
+}
+
 lc() {
     # http://stackoverflow.com/a/8952274
     uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ

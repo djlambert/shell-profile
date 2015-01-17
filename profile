@@ -75,13 +75,7 @@ $([ -f "${SHELL_PROFILE_LOCAL_PATH_FILE}" ] && cat "${SHELL_PROFILE_LOCAL_PATH_F
 _SHELL_PROFILE_LOCAL_PATHS_END
 )
 
-msgDebug "Adding paths..."
-
-for dir in $SHELL_PROFILE_LOCAL_PATHS; do
-    if [ -d "${dir}" ]; then
-        addPath "${dir}"
-    fi        
-done
+addPaths "${SHELL_PROFILE_LOCAL_PATHS}"
 
 #
 # Set shell options
