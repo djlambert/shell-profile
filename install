@@ -3,11 +3,16 @@ INSTALL_DIR="${HOME}/.shell"
 BACKUP_DIR="${INSTALL_DIR}/backup"
 TARBALL_URL="https://api.github.com/repos/djlambert/shell-profile/tarball/master"
 TARBALL_FILE=".shell-profile_${RANDOM}${RANDOM}.tgz"
+PATH_FILE_BASE="paths.local"
+PATH_FILE_LEGACY="${INSTALL_DIR}/${PATH_FILE_BASE}"
+PATH_FILE_PREPEND="${PATH_FILE_LEGACY}.prepend"
+VAR_FILE_LOCAL="${INSTALL_DIR}/vars.local"
 BOOTSTRAP_FILES="profile bashrc"
 INSTALL_FILES="dir_colors vimrc"
 INSTALL_FORCE=0
 INSTALL_LOCAL=0
 INSTALL_EXISTING=0
+INSTALL_SAVE_PATH=1
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 DEBUG=1
 RESULT=0
@@ -52,6 +57,21 @@ ioCloseAndExit() {
     exit $RESULT
 }
 
+findSetting() {
+    while read -r LINE; do
+        if expr "${LINE}" : "${1}=" >/dev/null; then
+            MATCH="${LINE}"
+        fi
+    done < "${2}"
+
+    if [ -n "${MATCH}" ]; then
+        echo "${MATCH}"
+        return 1
+    else
+        return 0
+    fi
+}
+
 cleanUp() {
     RESULT=$?
 
@@ -82,13 +102,14 @@ trap ioCloseAndExit TERM EXIT
 checkDebug
 
 # Process command line options
-while getopts i:fl opt; do
+while getopts i:flp opt; do
     case $opt in
         i) INSTALL_DIR="${OPTARG}";;
         f) INSTALL_FORCE=1;;
         l) INSTALL_LOCAL=1;;
+        p) INSTALL_SAVE_PATH=0;;
         ?)
-            printf "Usage: %s: [-f][-l][-i install dir]\n" $0
+            printf "Usage: %s: [-f][-l][-p][-i install dir]\n" $0
             exit 2
             ;;
     esac
@@ -196,4 +217,25 @@ for basename in $INSTALL_FILES; do
     cp "${INSTALL_DIR}/${basename}" "${destfile}"
 done
 
+# Migrate old paths.local file
+if [ -f "${PATH_FILE_LEGACY}" ]; then
+    bakfile="${BACKUP_DIR}/${PATH_FILE_BASE}.${TIMESTAMP}"
+    printf "Moving legacy paths from %s to %s\n" "${PATH_FILE_LEGACY}" "${PATH_FILE_PREPEND}"
+    cat "${PATH_FILE_LEGACY}" >> "${PATH_FILE_PREPEND}"
+    printf "Moving legacy paths file to %s\n" "${bakfile}"
+    mv "${PATH_FILE_LEGACY}" "${bakfile}"
+fi
+
+if [ "${INSTALL_SAVE_PATH}" -ne 1 ]; then
+    printf "Skipping saving existing path\n"
+else
+    findSetting "PATH" "${VAR_FILE_LOCAL}" >/dev/null
+
+    if [ $? -ne 0 ]; then
+        printf "PATH already in %s\n" "${VAR_FILE_LOCAL}"
+    else
+        printf "Saving current path in %s\n" "${VAR_FILE_LOCAL}"
+        printf "PATH=%s\n" "${PATH}" >> "${VAR_FILE_LOCAL}"
+    fi
+fi
 # vim: syntax=sh:ts=4:sw=4
