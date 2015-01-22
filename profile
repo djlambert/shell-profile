@@ -54,7 +54,7 @@ if [ "${TERM}" != "dumb" ]; then
             ;;
         *)
             if [ -f ~/.dir_colors ]; then
-                msgDebug "Found ~/.dir_colors, setting environment variables..."
+                msgDebug "Found ~/.dir_colors, setting ls environment variables..."
                 LS_OPTIONS="--color=auto"
                 eval $(dircolors ~/.dir_colors)
             fi
@@ -64,21 +64,25 @@ fi
 
 #
 # Check for and add common paths
-# Add local paths from SHELL_PROFILE_LOCAL_PATH_FILE
 #
 msgDebug "Setting PATH..."
 msgDebug "Current PATH=${PATH}"
-SHELL_PROFILE_LOCAL_PATHS=$(cat <<_SHELL_PROFILE_LOCAL_PATHS_END
+if [ $((${SHELL_PROFILE_ADD_COMMON_PATHS:-1})) -eq 1 ]; then
+    msgDebug "Adding common paths..."
+    SHELL_PROFILE_COMMON_PATHS=$(cat <<_SHELL_PROFILE_COMMON_PATHS_END
+/bin
+/sbin
+/usr/bin
+/usr/sbin
 /usr/local/bin
 /usr/local/sbin
 /opt/local/bin
 /opt/local/sbin
 $HOME/bin
-$([ -f "${SHELL_PROFILE_LOCAL_PATH_FILE}" ] && cat "${SHELL_PROFILE_LOCAL_PATH_FILE}")
-_SHELL_PROFILE_LOCAL_PATHS_END
+_SHELL_PROFILE_COMMON_PATHS_END
 )
-
-addPaths "${SHELL_PROFILE_LOCAL_PATHS}"
+    addPaths "${SHELL_PROFILE_COMMON_PATHS}"
+fi
 
 #
 # Add paths from SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE
