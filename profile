@@ -67,6 +67,7 @@ fi
 # Add local paths from SHELL_PROFILE_LOCAL_PATH_FILE
 #
 msgDebug "Setting PATH..."
+msgDebug "Current PATH=${PATH}"
 SHELL_PROFILE_LOCAL_PATHS=$(cat <<_SHELL_PROFILE_LOCAL_PATHS_END
 /usr/local/bin
 /usr/local/sbin
