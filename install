@@ -58,6 +58,10 @@ ioCloseAndExit() {
 }
 
 findSetting() {
+    if [ ! -f "${2}" ]; then
+        return 0
+    fi
+
     while read -r LINE; do
         if expr "${LINE}" : "${1}=" >/dev/null; then
             MATCH="${LINE}"
