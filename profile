@@ -15,10 +15,13 @@
 #
 # Load local settings before doing anything
 #
-if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ]; then
+if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ] && [ $((${SHELL_PROFILE_LOCAL_VARS_LOADED:-0})) != 1 ]; then
     . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
+#    SHELL_PROFILE_LOCAL_VARS_LOADED=1
     msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
     msgDebug "Debugging enabled"
+else
+    msgDebug "Local variables already loaded, skipping"
 fi
 
 msgDebug "Running profile script"
@@ -105,12 +108,8 @@ fi
 #
 case "${SHELL}" in
     *bash)
-        export HISTSIZE=1000000
-        export HISTFILESIZE=1000000
-        export HISTTIMEFORMAT="%F %T "
-        export HISTCONTROL=ignoreboth
-
         if [ -r "$HOME/.bashrc" ]; then
+            msgDebug "Starting bashrc script..."
             . "$HOME/.bashrc"
         fi
         ;;

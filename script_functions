@@ -9,19 +9,33 @@ msgDebug() {
     esac
 }
 
+readLink() {
+  LINK=$(ls -dl "${1}") 
+  echo "${LINK#*-> }"
+}
+
 addPath() {
+    if [ -L "${1}" ]; then
+        msgDebug "Resolving link ${1}..."
+        P=$(readLink "${1}")
+        msgDebug "Target is ${P}"
+    else
+        P="${1}"
+    fi
+
     case ":${PATH}:" in
-        *:"$1":*)
-            msgDebug "${1} already in path"
+        *:"$P":*)
+            msgDebug "${P} already in path"
             ;;
         *)
             if [ "$2" = "after" ]; then
-                msgDebug "Appending ${1} to PATH"
-                PATH=$PATH:$1
+                msgDebug "Appending ${P} to PATH"
+                PATH=$PATH:$P
             else
-                PATH=$1:$PATH
-                msgDebug "Prepending ${1} to PATH"
+                msgDebug "Prepending ${P} to PATH"
+                PATH=$P:$PATH
             fi
+            msgDebug "Current PATH=${PATH}"
     esac
 }
 
@@ -85,6 +99,7 @@ cleanUpVars() {
     for var in $(set); do
         case "${var%%=*}" in
             "SHELL_PROFILE_DEBUG");;
+            "SHELL_PROFILE_LOCAL_VARS_LOADED");;
             "SHELL_PROFILE_"*)
                 msgDebug "Unsetting variable ${var%%=*}"
                 unset -v "${var%%=*}"
