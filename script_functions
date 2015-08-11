@@ -60,14 +60,17 @@ lc() {
     uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ
     lowers=abcdefghijklmnopqrstuvwxyz
     i=0
+
     while ([ $i -lt ${#1} ]) do
         CUR=${1:$i:1}
         case $uppers in
             *$CUR*)CUR=${uppers%$CUR*};OUTPUT="${OUTPUT}${lowers:${#CUR}:1}";;
             *)OUTPUT="${OUTPUT}$CUR";;
         esac
+
         i=$((i+1))
     done
+
     echo "${OUTPUT}"
 }
 
@@ -76,14 +79,17 @@ uc() {
     uppers=ABCDEFGHIJKLMNOPQRSTUVWXYZ
     lowers=abcdefghijklmnopqrstuvwxyz
     i=0
+
     while ([ $i -lt ${#1} ]) do
         CUR=${1:$i:1}
         case $lowers in
             *$CUR*)CUR=${lowers%$CUR*};OUTPUT="${OUTPUT}${uppers:${#CUR}:1}";;
             *)OUTPUT="${OUTPUT}$CUR";;
         esac
+
         i=$((i+1))
     done
+
     echo "${OUTPUT}"
 }
 
@@ -116,6 +122,7 @@ clearFlag() {
 hasFlag() {
     msgDebug "Checking flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
     result=$((${SHELL_PROFILE_FLAGS:-0} & $1))
+
     if [ $result -eq $1 ]; then
         msgDebug "hasFlag=TRUE"
         true
