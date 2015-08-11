@@ -60,6 +60,6 @@ if [ -f "${HOME}/.shell/bashrc.local" ]; then
     . "${HOME}/.shell/bashrc.local"
 fi
 
-if [ "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" == "bashrc" ]; then
-    cleanUp
-fi
+
+cleanUp bashrc
+

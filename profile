@@ -119,6 +119,6 @@ export PATH LS_OPTIONS OS_TYPE
 #
 # Clean up
 #
-cleanUp
+cleanUp profile
 
 # vim: syntax=sh:ts=4:sw=4
