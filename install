@@ -108,10 +108,10 @@ checkDebug
 # Process command line options
 while getopts i:flp opt; do
     case $opt in
-        i) INSTALL_DIR="${OPTARG}";;
-        f) INSTALL_FORCE=1;;
-        l) INSTALL_LOCAL=1;;
-        p) INSTALL_SAVE_PATH=0;;
+        i) INSTALL_DIR="${OPTARG}";; # Specify install directory
+        f) INSTALL_FORCE=1;;         # Force install over existing files
+        l) INSTALL_LOCAL=1;;         # Use current directory as install source
+        p) INSTALL_SAVE_PATH=0;;     # Save existing $PATH
         ?)
             printf "Usage: %s: [-f][-l][-p][-i install dir]\n" $0
             exit 2
