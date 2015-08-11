@@ -13,11 +13,6 @@ if [ $? -eq 0 ]; then
     SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=profile
 fi
 
-#
-# Load local shell-profile settings before doing anything
-#
-loadLocalVars
-
 msgDebug "Running profile script"
 
 #

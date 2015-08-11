@@ -182,6 +182,11 @@ cleanUp() {
 
 msgDebug "script_functions loaded"
 
+#
+# Load local shell-profile settings before doing anything
+#
+loadLocalVars
+
 return 0
 
 # vim: syntax=sh:ts=4:sw=4
