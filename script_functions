@@ -10,7 +10,7 @@ msgDebug() {
 }
 
 readLink() {
-  LINK=$(ls -dl "${1}") 
+  LINK=$(ls -dl "${1}")
   echo "${LINK#*-> }"
 }
 
@@ -95,9 +95,32 @@ getPlatform() {
     echo "${platform}"
 }
 
+setFlag() {
+    msgDebug "Setting flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    ((SHELL_PROFILE_FLAGS|=$1))
+}
+
+clearFlag() {
+    msgDebug "Clearing flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    ((SHELL_PROFILE_FLAGS&=~$1))
+}
+
+hasFlag() {
+    msgDebug "Checking flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    ((result=SHELL_PROFILE_FLAGS&$1))
+    if [ $result -eq $1 ]; then
+        msgDebug "hasFlag=TRUE"
+        echo 1
+    else
+        msgDebug "hasFlag=FALSE"
+        echo 0
+    fi
+}
+
 cleanUpVars() {
     for var in $(set); do
         case "${var%%=*}" in
+            "SHELL_PROFILE_FLAGS");;
             "SHELL_PROFILE_DEBUG");;
             "SHELL_PROFILE_LOCAL_VARS_LOADED");;
             "SHELL_PROFILE_"*)
@@ -112,7 +135,7 @@ cleanUp() {
     msgDebug "Cleaning up..."
     cleanUpVars
     msgDebug "Unsetting functions..."
-    unset -f addPath lc uc getPlatform cleanUp cleanUpVars msgDebug
+    unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
     unset -v SHELL_PROFILE_DEBUG
 }
 
