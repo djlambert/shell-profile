@@ -1,2 +1,2 @@
-# Ignore local settings
-*.local
+.idea
+
