@@ -1,3 +1,4 @@
+#!/bin/bash
 # Load includes
 . "${SHELL_PROFILE_PATH}/script_functions"
 
@@ -28,7 +29,7 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 # Set prompt
 #
 typeset +x PS1='[\t][\u@\h]\w\$ '
- 
+
 #
 # Set ls aliases
 #

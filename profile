@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # Profile script
 #
@@ -29,7 +30,7 @@ if [ "${SHELL_PROFILE_PLATFORM}" == "unknown" ]; then
 else
     msgDebug "Detected platform ${SHELL_PROFILE_PLATFORM}"
 fi
-  
+
 #
 # Define pager
 #
