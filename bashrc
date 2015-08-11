@@ -1,20 +1,15 @@
 # Load includes
+. "${SHELL_PROFILE_PATH}/script_functions"
 
-. "${SHELL_PROFILE_PATH}/vars"
-
-if [ -z "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" ]; then
-    . "${SHELL_PROFILE_PATH}/script_functions"
-    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS="bashrc"
+if [ $? -eq 0 ]; then
+    msgDebug "Loaded script_functions in bashrc"
+    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=bashrc
 fi
 
-#if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ] && [ $((${SHELL_PROFILE_LOCAL_VARS_LOADED:-0})) != 1 ]; then
-#    . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
-#    SHELL_PROFILE_LOCAL_VARS_LOADED=1
-#    msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
-#    msgDebug "Debugging enabled"
-#else
-#    msgDebug "Local variables already loaded, skipping"
-#fi
+#
+# Load local shell-profile settings before doing anything
+#
+loadLocalVars
 
 msgDebug "Running bashrc script"
 

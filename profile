@@ -5,24 +5,17 @@
 #
 
 # Load includes
-. "${SHELL_PROFILE_PATH}/vars"
 . "${SHELL_PROFILE_PATH}/script_functions"
 
-##
-## Start of script
-##
+if [ $? -eq 0 ]; then
+    msgDebug "Loaded script_functions in profile"
+    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=profile
+fi
 
 #
-# Load local settings before doing anything
+# Load local shell-profile settings before doing anything
 #
-if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ] && [ $((${SHELL_PROFILE_LOCAL_VARS_LOADED:-0})) != 1 ]; then
-    . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
-#    SHELL_PROFILE_LOCAL_VARS_LOADED=1
-    msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
-    msgDebug "Debugging enabled"
-else
-    msgDebug "Local variables already loaded, skipping"
-fi
+loadLocalVars
 
 msgDebug "Running profile script"
 
