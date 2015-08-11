@@ -96,18 +96,20 @@ getPlatform() {
 }
 
 setFlag() {
-    msgDebug "Setting flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
-    ((SHELL_PROFILE_FLAGS|=$1))
+    msgDebug "Setting flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    SHELL_PROFILE_FLAGS=$(($SHELL_PROFILE_FLAGS | $1))
+    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
 }
 
 clearFlag() {
-    msgDebug "Clearing flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
-    ((SHELL_PROFILE_FLAGS&=~$1))
+    msgDebug "Clearing flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    SHELL_PROFILE_FLAGS=$(($SHELL_PROFILE_FLAGS & ~$1))
+    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
 }
 
 hasFlag() {
-    msgDebug "Checking flag {$1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
-    ((result=SHELL_PROFILE_FLAGS&$1))
+    msgDebug "Checking flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    result=$((${SHELL_PROFILE_FLAGS:-0} & $1))
     if [ $result -eq $1 ]; then
         msgDebug "hasFlag=TRUE"
         echo 1
