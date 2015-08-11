@@ -112,10 +112,10 @@ hasFlag() {
     result=$((${SHELL_PROFILE_FLAGS:-0} & $1))
     if [ $result -eq $1 ]; then
         msgDebug "hasFlag=TRUE"
-        echo 1
+        true
     else
         msgDebug "hasFlag=FALSE"
-        echo 0
+        false
     fi
 }
 
