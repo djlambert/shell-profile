@@ -1,7 +1,13 @@
 # Script functions
 # These should all be removed from the environment when script finishes
 
-SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=1
+if type msgDebug 2>/dev/null | grep -iq function; then
+    msgDebug "script_functions already loaded"
+
+    return 1
+fi
+
+. "${SHELL_PROFILE_PATH}/vars"
 
 msgDebug() {
     case $- in
@@ -161,5 +167,9 @@ cleanUp() {
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
     unset -v SHELL_PROFILE_DEBUG
 }
+
+msgDebug "script_functions loaded"
+
+return 0
 
 # vim: syntax=sh:ts=4:sw=4
