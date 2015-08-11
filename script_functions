@@ -161,7 +161,12 @@ loadLocalVars() {
 }
 
 cleanUp() {
-    msgDebug "Cleaning up..."
+    if [ "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" != "${1}" ]; then
+        msgDebug "Skipping cleanup call from ${1}"
+        return 1
+    fi
+
+    msgDebug "Cleaning up from ${1}..."
     cleanUpVars
     msgDebug "Unsetting functions..."
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
