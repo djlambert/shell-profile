@@ -2,11 +2,12 @@
 # Load includes
 . "${SHELL_PROFILE_PATH}/script_functions" bashrc
 
-if [ $? -eq 0 ]; then
-    msgDebug "Loaded script_functions in bashrc"
-    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=bashrc
+if hasFlag $SHELL_PROFILE_FLAG_BASHRC_DONE; then
+    msgDebug "Skipping bashrc, already run.\n"
+    return
 fi
 
+setFlag $SHELL_PROFILE_FLAG_BASHRC_DONE
 msgDebug "==> Running bashrc script\n"
 
 #
