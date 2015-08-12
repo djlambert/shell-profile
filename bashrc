@@ -7,12 +7,12 @@ if [ $? -eq 0 ]; then
     SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=bashrc
 fi
 
-msgDebug "Running bashrc script"
+msgDebug "==> Running bashrc script\n"
 
 #
 # Setup history
 #
-msgDebug "Configuring history"
+msgDebug "Configuring history\n"
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
 export HISTTIMEFORMAT="%F %T "
@@ -56,6 +56,7 @@ if [ -f "${HOME}/.shell/bashrc.local" ]; then
     . "${HOME}/.shell/bashrc.local"
 fi
 
+msgDebug "==> Done in bashrc script\n"
 
 cleanUp bashrc
 

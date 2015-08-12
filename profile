@@ -13,7 +13,7 @@ if [ $? -eq 0 ]; then
     SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=profile
 fi
 
-msgDebug "Running profile script"
+msgDebug "==> Running profile script\n"
 
 #
 # Get platform
@@ -21,9 +21,9 @@ msgDebug "Running profile script"
 SHELL_PROFILE_PLATFORM=$(getPlatform)
 
 if [ "${SHELL_PROFILE_PLATFORM}" == "unknown" ]; then
-    msgDebug "Unknown platform detected!"
+    msgDebug "Unknown platform detected!\n"
 else
-    msgDebug "Detected platform ${SHELL_PROFILE_PLATFORM}"
+    msgDebug "Detected platform ${SHELL_PROFILE_PLATFORM}\n"
 fi
 
 #
@@ -46,7 +46,7 @@ if [ "${TERM}" != "dumb" ]; then
             ;;
         *)
             if [ -f ~/.dir_colors ]; then
-                msgDebug "Found ~/.dir_colors, setting ls environment variables..."
+                msgDebug "Found ~/.dir_colors, setting ls environment variables...\n"
                 LS_OPTIONS="--color=auto"
                 eval $(dircolors ~/.dir_colors)
             fi
@@ -57,10 +57,10 @@ fi
 #
 # Check for and add common paths
 #
-msgDebug "Setting PATH..."
-msgDebug "Current PATH=${PATH}"
+msgDebug "Setting PATH...\n"
+msgDebug "Current PATH=${PATH}\n"
 if [ $((${SHELL_PROFILE_ADD_COMMON_PATHS:-1})) -eq 1 ]; then
-    msgDebug "Adding common paths..."
+    msgDebug "Adding common paths...\n"
     SHELL_PROFILE_COMMON_PATHS=$(cat <<_SHELL_PROFILE_COMMON_PATHS_END
 /bin
 /sbin
@@ -80,7 +80,7 @@ fi
 # Add paths from SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE
 #
 if [ -f "${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}" ]; then
-    msgDebug "Prepending paths from ${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}..."
+    msgDebug "Prepending paths from ${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}...\n"
     addPaths "$(cat "${SHELL_PROFILE_LOCAL_PATH_PREPEND_FILE}")"
 fi
 
@@ -88,7 +88,7 @@ fi
 # Add paths from SHELL_PROFILE_LOCAL_PATH_APPEND_FILE
 #
 if [ -f "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}" ]; then
-    msgDebug "Appending paths from ${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}..."
+    msgDebug "Appending paths from ${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}...\n"
     addPaths "$(cat "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}")" after
 fi
 
@@ -98,7 +98,7 @@ fi
 case "${SHELL}" in
     *bash)
         if [ -r "$HOME/.bashrc" ]; then
-            msgDebug "Starting bashrc script..."
+            msgDebug "Starting bashrc script...\n"
             . "$HOME/.bashrc"
         fi
         ;;
@@ -111,6 +111,8 @@ msgDebug "Loading shell functions"
 # Export vars
 #
 export PATH LS_OPTIONS OS_TYPE
+
+msgDebug "==> Done in profile script\n"
 
 #
 # Clean up

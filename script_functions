@@ -11,7 +11,7 @@ fi
 
 msgDebug() {
     case $- in
-        *i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "%s\n" "${1}";;
+        *i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "${1}";;
     esac
 }
 
@@ -22,26 +22,26 @@ readLink() {
 
 addPath() {
     if [ -L "${1}" ]; then
-        msgDebug "Resolving link ${1}..."
+        msgDebug "Resolving link ${1}...\n"
         P=$(readLink "${1}")
-        msgDebug "Target is ${P}"
+        msgDebug "Target is ${P}\n"
     else
         P="${1}"
     fi
 
     case ":${PATH}:" in
         *:"$P":*)
-            msgDebug "${P} already in path"
+            msgDebug "${P} already in path\n"
             ;;
         *)
             if [ "$2" = "after" ]; then
-                msgDebug "Appending ${P} to PATH"
+                msgDebug "Appending ${P} to PATH\n"
                 PATH=$PATH:$P
             else
-                msgDebug "Prepending ${P} to PATH"
+                msgDebug "Prepending ${P} to PATH\n"
                 PATH=$P:$PATH
             fi
-            msgDebug "Current PATH=${PATH}"
+            msgDebug "Current PATH=${PATH}\n"
     esac
 }
 
@@ -50,7 +50,7 @@ addPaths() {
         if [ -d "${dir}" ]; then
             addPath "${dir}" "${2}"
         else
-            msgDebug "${dir} not found, skipping"
+            msgDebug "${dir} not found, skipping\n"
         fi
     done
 }
@@ -110,13 +110,13 @@ getPlatform() {
 setFlag() {
     msgDebug "Setting flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
     SHELL_PROFILE_FLAGS=$(($SHELL_PROFILE_FLAGS | $1))
-    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}\n"
 }
 
 clearFlag() {
     msgDebug "Clearing flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
     SHELL_PROFILE_FLAGS=$(($SHELL_PROFILE_FLAGS & ~$1))
-    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}"
+    msgDebug "SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS}\n"
 }
 
 hasFlag() {
@@ -124,10 +124,10 @@ hasFlag() {
     result=$((${SHELL_PROFILE_FLAGS:-0} & $1))
 
     if [ $result -eq $1 ]; then
-        msgDebug "hasFlag=TRUE"
+        msgDebug "hasFlag=TRUE\n"
         true
     else
-        msgDebug "hasFlag=FALSE"
+        msgDebug "hasFlag=FALSE\n"
         false
     fi
 }
@@ -139,7 +139,7 @@ cleanUpVars() {
             "SHELL_PROFILE_DEBUG");;
             "SHELL_PROFILE_LOCAL_VARS_LOADED");;
             "SHELL_PROFILE_"*)
-                msgDebug "Unsetting variable ${var%%=*}"
+                msgDebug "Unsetting variable ${var%%=*}\n"
                 unset -v "${var%%=*}"
                 ;;
         esac
@@ -154,28 +154,28 @@ loadLocalVars() {
         result=$?
 
         if [ $result -eq 0 ]; then
-            msgDebug "WARNING: Non SHELL_PROFILE variables found in ${SHELL_PROFILE_LOCAL_VAR_FILE}"
+            msgDebug "WARNING: Non SHELL_PROFILE variables found in ${SHELL_PROFILE_LOCAL_VAR_FILE}\n"
         fi
 
         . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
         setFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED
 
         msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
-        msgDebug "Debugging enabled"
+        msgDebug "Debugging enabled\n"
     else
-        msgDebug "Local variables already loaded, skipping"
+        msgDebug "Local variables already loaded, skipping\n"
     fi
 }
 
 cleanUp() {
     if [ "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" != "${1}" ]; then
-        msgDebug "Skipping cleanup call from ${1}"
+        msgDebug "Skipping cleanup call from ${1}\n"
         return 1
     fi
 
-    msgDebug "Cleaning up from ${1}..."
+    msgDebug "Cleaning up from ${1}...\n"
     cleanUpVars
-    msgDebug "Unsetting functions..."
+    msgDebug "Unsetting functions...\n"
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
     unset -v SHELL_PROFILE_DEBUG
 }
