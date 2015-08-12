@@ -61,3 +61,4 @@ msgDebug "==> Done in bashrc script\n"
 
 cleanUp bashrc
 
+# vim: syntax=sh:ts=4:sw=4
