@@ -87,6 +87,17 @@ if [ -f "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}" ]; then
     addPaths "$(cat "${SHELL_PROFILE_LOCAL_PATH_APPEND_FILE}")" after
 fi
 
+msgDebug "Loading shell functions\n"
+. "${SHELL_PROFILE_PATH}/shell_functions"
+
+#
+# Run profile.local if it exists
+#
+if [ -f "${SHELL_PROFILE_PATH}/profile.local" ]; then
+    msgDebug "Starting profile.local...\n"
+    . "${SHELL_PROFILE_PATH}/profile.local"
+fi
+
 #
 # Set shell options
 #
@@ -99,8 +110,6 @@ case "${SHELL}" in
         ;;
 esac
 
-msgDebug "Loading shell functions"
-. "${SHELL_PROFILE_PATH}/shell_functions"
 
 #
 # Export vars
