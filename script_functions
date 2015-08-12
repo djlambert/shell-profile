@@ -30,15 +30,15 @@ indent() {
     printf %${SHELL_PROFILE_INDENT:-0}s | tr " " "\t"
 }
 
-readLink() {
-  LINK=$(ls -dl "${1}")
+resolveLink() {
+  LINK=$('ls' -dl "${1}")
   echo "${LINK#*-> }"
 }
 
 addPath() {
     if [ -L "${1}" ]; then
         msgDebug "Resolving link ${1}...\n"
-        P=$(readLink "${1}")
+        P=$(resolveLink "${1}")
         msgDebug "Target is ${P}\n"
     else
         P="${1}"
