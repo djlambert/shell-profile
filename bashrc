@@ -1,6 +1,6 @@
 #!/bin/bash
 # Load includes
-. "${SHELL_PROFILE_PATH}/script_functions"
+. "${SHELL_PROFILE_PATH}/script_functions" bashrc
 
 if [ $? -eq 0 ]; then
     msgDebug "Loaded script_functions in bashrc"

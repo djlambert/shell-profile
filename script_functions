@@ -2,7 +2,7 @@
 # These should all be removed from the environment when script finishes
 
 if type msgDebug 2>/dev/null | grep -iq function; then
-    msgDebug "script_functions already loaded"
+    msgDebug "script_functions already loaded in ${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}\n"
 
     return 1
 fi
@@ -180,7 +180,8 @@ cleanUp() {
     unset -v SHELL_PROFILE_DEBUG
 }
 
-msgDebug "script_functions loaded"
+msgDebug "script_functions loaded in ${1}\n"
+SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=${1}
 
 #
 # Load local shell-profile settings before doing anything

@@ -6,12 +6,7 @@
 #
 
 # Load includes
-. "${SHELL_PROFILE_PATH}/script_functions"
-
-if [ $? -eq 0 ]; then
-    msgDebug "Loaded script_functions in profile"
-    SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=profile
-fi
+. "${SHELL_PROFILE_PATH}/script_functions" profile
 
 msgDebug "==> Running profile script\n"
 
