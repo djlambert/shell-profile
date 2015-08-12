@@ -58,6 +58,7 @@ addPath() {
             fi
             msgDebug "Current PATH=${PATH}\n"
     esac
+
 }
 
 addPaths() {
@@ -152,7 +153,6 @@ cleanUpVars() {
         case "${var%%=*}" in
             "SHELL_PROFILE_FLAGS");;
             "SHELL_PROFILE_DEBUG");;
-            "SHELL_PROFILE_LOCAL_VARS_LOADED");;
             "SHELL_PROFILE_"*)
                 msgDebug "Unsetting variable ${var%%=*}\n"
                 unset -v "${var%%=*}"
@@ -162,9 +162,8 @@ cleanUpVars() {
 }
 
 loadLocalVars() {
-    msgDebug "Loading local variables"
-
     if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ] && ! hasFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED; then
+        msgDebug "Loading local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}\n"
         grep -Ev '^($|#|\s+|SHELL_PROFILE_)' ${SHELL_PROFILE_LOCAL_VAR_FILE} >/dev/null 2>&1
         result=$?
 
@@ -175,7 +174,6 @@ loadLocalVars() {
         . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
         setFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED
 
-        msgDebug "Loaded local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}"
         msgDebug "Debugging enabled\n"
     else
         msgDebug "Local variables already loaded, skipping\n"
@@ -185,14 +183,15 @@ loadLocalVars() {
 cleanUp() {
     if [ "${SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS}" != "${1}" ]; then
         msgDebug "Skipping cleanup call from ${1}\n"
+
         return 1
     fi
 
     msgDebug "Cleaning up from ${1}...\n"
     cleanUpVars
+
     msgDebug "Unsetting functions...\n"
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
-    unset -v SHELL_PROFILE_DEBUG
 }
 
 msgDebug "script_functions loaded in ${1}\n"
