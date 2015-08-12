@@ -188,9 +188,8 @@ cleanUp() {
     fi
 
     msgDebug "Cleaning up from ${1}...\n"
-    cleanUpVars
-
     clearFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED
+    cleanUpVars
 
     msgDebug "Unsetting functions...\n"
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
