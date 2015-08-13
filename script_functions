@@ -149,11 +149,11 @@ hasFlag() {
 }
 
 cleanUpVars() {
-    for var in $(set); do
+    for var in $(set | grep -e "^SHELL_PROFILE_"); do
         case "${var%%=*}" in
             "SHELL_PROFILE_FLAGS");;
             "SHELL_PROFILE_DEBUG");;
-            "SHELL_PROFILE_"*)
+            *)
                 msgDebug "Unsetting variable ${var%%=*}\n"
                 unset -v "${var%%=*}"
                 ;;
