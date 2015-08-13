@@ -192,7 +192,7 @@ cleanUp() {
     cleanUpVars
 
     msgDebug "Unsetting functions...\n"
-    unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag msgDebug
+    unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag indent resolveLink loadLocalVars addPaths msgDebug
 }
 
 msgDebug "script_functions loaded in ${1}\n"
