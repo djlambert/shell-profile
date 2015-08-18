@@ -99,14 +99,18 @@ if [ -f "${SHELL_PROFILE_PATH}/profile.local" ]; then
 fi
 
 #
-# Set shell options
+# Set shell options for interactive shells
 #
-case "${SHELL}" in
-    *bash)
-        if [ -r "$HOME/.bashrc" ]; then
-            msgDebug "Starting bashrc script...\n"
-            . "$HOME/.bashrc"
-        fi
+case $- in
+    *i*)
+        case "${SHELL}" in
+            *bash)
+                if [ -r "$HOME/.bashrc" ]; then
+                    msgDebug "Starting bashrc script...\n"
+                    . "$HOME/.bashrc"
+                fi
+                ;;
+        esac
         ;;
 esac
 
