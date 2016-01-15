@@ -1,3 +1,10 @@
 F=tmp_$RANDOM;mkdir $F;curl -L https://github.com/djlambert/shell-profile/tarball/master|tar -xvC $F -f - --strip-components 1;sh $F/install
 
 F=tmp_$RANDOM;curl -s https://raw.githubusercontent.com/djlambert/shell-profile/master/install>$F;sh $F;rm -f $F
+
+curl -sL https://github.com/djlambert/shell-profile/tarball/master | gunzip -c | compress -c | uuencode -m /dev/stdout
+
+F=tmp_$RANDOM;mkdir $F;uudecode | tar -xvC $F -f -
+
+
+F=tmp_$RANDOM;mkdir $F;uudecode | pax -r -s "/.*\//$F\//p"
