@@ -20,7 +20,7 @@ export HISTTIMEFORMAT="%F %T "
 export HISTCONTROL=ignoreboth
 export HISTIGNORE='ls:bg:fg:history'
 shopt -s histappend
-export PROMPT_COMMAND="history -a; history -c; history -r; printf \"\033]0;%s@%s:%s\007\" \"${USER}\" \"${HOSTNAME%%.*}\" \"${PWD/#$HOME/~}\"; ${PROMPT_COMMAND}"
+export PROMPT_COMMAND="history -a; history -c; history -r; settitle; ${PROMPT_COMMAND}"
 
 #
 # Set prompt
