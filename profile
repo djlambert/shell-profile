@@ -10,7 +10,7 @@
 
 if hasFlag $SHELL_PROFILE_FLAG_PROFILE_DONE; then
     msgDebug "Skipping profile, already run.\n"
-#    return
+    return
 fi
 
 setFlag $SHELL_PROFILE_FLAG_PROFILE_DONE
