@@ -111,7 +111,7 @@ case $- in
     *i*)
         case "${SHELL}" in
             *bash)
-                if [ -r "$HOME/.bashrc" ]; then
+                if [ -r "$HOME/.bashrc" ] && ! hasFlag $SHELL_PROFILE_FLAG_BASHRC_DONE; then
                     msgDebug "Starting bashrc script...\n"
                     . "$HOME/.bashrc"
                 fi
