@@ -2,6 +2,11 @@
 # Load includes
 . "${SHELL_PROFILE_PATH}/script_functions" bashrc
 
+if ! hasFlag $SHELL_PROFILE_FLAG_PROFILE_DONE; then
+    msgDebug "Starting bashrc script...\n"
+    . "$HOME/.profile"
+fi
+
 if hasFlag $SHELL_PROFILE_FLAG_BASHRC_DONE; then
     msgDebug "Skipping bashrc, already run.\n"
     return

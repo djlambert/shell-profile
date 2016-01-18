@@ -8,6 +8,12 @@
 # Load includes
 . "${SHELL_PROFILE_PATH}/script_functions" profile
 
+if hasFlag $SHELL_PROFILE_FLAG_PROFILE_DONE; then
+    msgDebug "Skipping profile, already run.\n"
+#    return
+fi
+
+setFlag $SHELL_PROFILE_FLAG_PROFILE_DONE
 msgDebug "==> Running profile script\n"
 
 #
