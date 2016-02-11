@@ -149,7 +149,7 @@ hasFlag() {
 }
 
 cleanUpVars() {
-    for var in $(set | grep -e "^SHELL_PROFILE_"); do
+    for var in $(set | egrep "^SHELL_PROFILE_"); do
         case "${var%%=*}" in
             "SHELL_PROFILE_FLAGS");;
             "SHELL_PROFILE_DEBUG");;
