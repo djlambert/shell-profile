@@ -1,3 +1,4 @@
+#!/bin/sh
 # Script functions
 # These should all be removed from the environment when script finishes
 
@@ -63,6 +64,10 @@ addPath() {
 
 addPaths() {
     for dir in $1; do
+        if [ "${dir}" != "${dir#\#}" ]; then
+            continue
+        fi
+
         if [ -d "${dir}" ]; then
             addPath "${dir}" "${2}"
         else
@@ -77,7 +82,7 @@ lc() {
     lowers=abcdefghijklmnopqrstuvwxyz
     i=0
 
-    while ([ $i -lt ${#1} ]) do
+    while ([ $i -lt ${#1} ]); do
         CUR=${1:$i:1}
         case $uppers in
             *$CUR*)CUR=${uppers%$CUR*};OUTPUT="${OUTPUT}${lowers:${#CUR}:1}";;
@@ -96,7 +101,7 @@ uc() {
     lowers=abcdefghijklmnopqrstuvwxyz
     i=0
 
-    while ([ $i -lt ${#1} ]) do
+    while ([ $i -lt ${#1} ]); do
         CUR=${1:$i:1}
         case $lowers in
             *$CUR*)CUR=${lowers%$CUR*};OUTPUT="${OUTPUT}${uppers:${#CUR}:1}";;
