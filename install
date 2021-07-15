@@ -164,9 +164,9 @@ fi
 if [ ${INSTALL_LOCAL:-0} -ne 1 ]; then
     printf 'Downloading package files...\n'
 
-    if command wget >/dev/null 2>&1; then
+    if command -v wget >/dev/null 2>&1; then
         getCommand="wget --no-verbose --no-check-certificate --output-document=${TARBALL_FILE} ${TARBALL_URL}"
-    elif command curl >/dev/null 2>&1; then
+    elif command -v curl >/dev/null 2>&1; then
         getCommand="curl --silent --fail --insecure --output ${TARBALL_FILE} ${TARBALL_URL}"
     else
         printf 'Aborting install, wget or curl not found\n'
