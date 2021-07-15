@@ -15,6 +15,7 @@ set shiftwidth=4
 set expandtab
 set bs=2
 set ruler
+set modeline
 
 " TODO: update path on install
 if filereadable(glob("~/.shell/vimrc.local")) 
