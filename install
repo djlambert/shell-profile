@@ -121,7 +121,7 @@ done
 # Create install directory
 # Exit with error on failure or directory exists and not force install
 if [ -d "${INSTALL_DIR}" ]; then
-    if [ ${INSTALL_FORCE:-0} ]; then
+    if [ ${INSTALL_FORCE:-0} -ne 1 ]; then
         printf "Aborting install, directory %s already exists\n" "${INSTALL_DIR}"
         exit 1
     else
