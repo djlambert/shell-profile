@@ -8,12 +8,12 @@
 # Load includes
 . "${SHELL_PROFILE_PATH}/script_functions" profile
 
-if hasFlag $SHELL_PROFILE_FLAG_PROFILE_DONE; then
+if hasFlag "${SHELL_PROFILE_FLAG_PROFILE_DONE}"; then
     msgDebug "Skipping profile, already run.\n"
     return
 fi
 
-setFlag $SHELL_PROFILE_FLAG_PROFILE_DONE
+setFlag "${SHELL_PROFILE_FLAG_PROFILE_DONE}"
 msgDebug "==> Running profile script\n"
 
 #
@@ -21,7 +21,7 @@ msgDebug "==> Running profile script\n"
 #
 SHELL_PROFILE_PLATFORM=$(getPlatform)
 
-if [ "${SHELL_PROFILE_PLATFORM}" == "unknown" ]; then
+if [ "${SHELL_PROFILE_PLATFORM}" = "unknown" ]; then
     msgDebug "Unknown platform detected!\n"
 else
     msgDebug "Detected platform ${SHELL_PROFILE_PLATFORM}\n"

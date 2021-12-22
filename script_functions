@@ -18,8 +18,8 @@ msgDebug() {
 }
 
 indent() {
-    if [ "$1" ]; then
-        if [ $1 -lt 0 ] && [ ${SHELL_PROFILE_INDENT:-0} -lt 1 ]; then
+    if [ "${1}" ]; then
+        if [ "${1}" -lt 0 ] && [ ${SHELL_PROFILE_INDENT:-0} -lt 1 ]; then
             SHELL_PROFILE_INDENT=0
         else
             SHELL_PROFILE_INDENT=$((${SHELL_PROFILE_INDENT:-0} + $1))
@@ -46,11 +46,11 @@ addPath() {
     fi
 
     case ":${PATH}:" in
-        *:"$P":*)
+        *:"${P}":*)
             msgDebug "${P} already in path\n"
             ;;
         *)
-            if [ "$2" = "after" ]; then
+            if [ "${2}" = "after" ]; then
                 msgDebug "Appending ${P} to PATH\n"
                 PATH=$PATH:$P
             else
@@ -120,7 +120,7 @@ getPlatform() {
 
     if [ $result ]; then
         platform=$(uname -s)
-        platform=$(lc ${platform})
+        platform=$(lc "${platform}")
     else
         platform="unknown"
     fi
@@ -144,7 +144,7 @@ hasFlag() {
     msgDebug "Checking flag ${1}. SHELL_PROFILE_FLAGS=${SHELL_PROFILE_FLAGS:-0}. "
     result=$((${SHELL_PROFILE_FLAGS:-0} & $1))
 
-    if [ $result -eq $1 ]; then
+    if [ ${result} -eq ${1} ]; then
         msgDebug "hasFlag=TRUE\n"
         true
     else
@@ -169,7 +169,7 @@ cleanUpVars() {
 loadLocalVars() {
     if [ -r "${SHELL_PROFILE_LOCAL_VAR_FILE}" ] && ! hasFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED; then
         msgDebug "Loading local variables from ${SHELL_PROFILE_LOCAL_VAR_FILE}\n"
-        grep -Ev '^($|#|\s+|SHELL_PROFILE_)' ${SHELL_PROFILE_LOCAL_VAR_FILE} >/dev/null 2>&1
+        grep -Ev '^($|#|\s+|SHELL_PROFILE_)' "${SHELL_PROFILE_LOCAL_VAR_FILE}" >/dev/null 2>&1
         result=$?
 
         if [ $result -eq 0 ]; then
@@ -177,7 +177,7 @@ loadLocalVars() {
         fi
 
         . "${SHELL_PROFILE_LOCAL_VAR_FILE}"
-        setFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED
+        setFlag "${SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED}"
 
         msgDebug "Debugging enabled\n"
     else
@@ -193,7 +193,7 @@ cleanUp() {
     fi
 
     msgDebug "Cleaning up from ${1}...\n"
-    clearFlag $SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED
+    clearFlag "${SHELL_PROFILE_FLAG_VARS_LOCAL_LOADED}"
     cleanUpVars
 
     msgDebug "Unsetting functions...\n"
