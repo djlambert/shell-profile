@@ -200,8 +200,9 @@ cleanUp() {
     unset -f addPath lc uc getPlatform cleanUp cleanUpVars setFlag clearFlag hasFlag indent resolveLink loadLocalVars addPaths msgDebug
 }
 
-msgDebug "script_functions loaded in ${1}\n"
-SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=${1}
+CALLER=${1:-$CALLER}
+msgDebug "script_functions loaded in ${CALLER}\n"
+SHELL_PROFILE_DEF_SCRIPT_FUNCTIONS=${CALLER}
 
 #
 # Load local shell-profile settings before doing anything

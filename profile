@@ -6,7 +6,7 @@
 #
 
 # Load includes
-. "${SHELL_PROFILE_PATH}/script_functions" profile
+CALLER=profile . "${SHELL_PROFILE_PATH}/script_functions"
 
 if hasFlag "${SHELL_PROFILE_FLAG_PROFILE_DONE}"; then
     msgDebug "Skipping profile, already run.\n"
