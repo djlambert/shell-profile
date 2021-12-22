@@ -65,7 +65,6 @@ addPath() {
             fi
             msgDebug "Current PATH=${PATH}\n"
     esac
-
 }
 
 addPaths() {
