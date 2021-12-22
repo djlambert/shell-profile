@@ -11,8 +11,14 @@ fi
 . "${SHELL_PROFILE_PATH}/vars"
 
 msgDebug() {
+    if [ "${ZSH_NAME}" ]; then
+        format="%b"
+    else
+        format="%s"
+    fi
+
     case $- in
-        *i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "${1}";;
+        *i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "${format}" "${1}";;
         #*i*) [ $((${SHELL_PROFILE_DEBUG:-0})) -eq 1 ] && printf "$(indent)${1}";;
     esac
 }
@@ -63,7 +69,13 @@ addPath() {
 }
 
 addPaths() {
-    for dir in $1; do
+    if [ "${ZSH_NAME}" ]; then
+        dirs=(${(f)1})
+    else
+        dirs=${1}
+    fi
+
+    for dir in $dirs; do
         if [ "${dir}" != "${dir#\#}" ]; then
             continue
         fi
